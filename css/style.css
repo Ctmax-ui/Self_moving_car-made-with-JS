@@ -10,6 +10,9 @@ body{
     background-color: #a9a9a9;
 }
 
-#myCanvas{
+#carCanvas{
     background: #d3d3d3;
+}
+#networkCanvas{
+    background-color: black;
 }

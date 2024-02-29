@@ -6,8 +6,28 @@
 }
 body{
     overflow: hidden;
-    text-align: center;
     background-color: #a9a9a9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#verticalButtons{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center;
+    align-items: center; */
+}
+button{
+    border: none;
+    border-radius: 6px;
+    padding: 5px 5px 7px 5px;
+    cursor: pointer;
+    margin: 4px;
+    transition: all .3s ease;
+}
+button:hover{
+    background-color: #2b2b2b;
 }
 
 #carCanvas{

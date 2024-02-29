@@ -1,40 +1,106 @@
-const carCanvas=document.getElementById("carCanvas");
-carCanvas.width=200;
-const networkCanvas=document.getElementById("networkCanvas");
-networkCanvas.width=300;
+const carCanvas = document.getElementById("carCanvas");
+carCanvas.width = 200;
+const networkCanvas = document.getElementById("networkCanvas");
+networkCanvas.width = 300;
 
 const carCtx = carCanvas.getContext("2d");
 const networkCtx = networkCanvas.getContext("2d");
 
-const road=new Road(carCanvas.width/2,carCanvas.width*0.9);
-const car=new Car(road.getLaneCenter(1),100,30,50,"AI");
-const traffic=[
-    new Car(road.getLaneCenter(1),-100,30,50,"DUMMY",2)
+const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
+
+
+const N = 100;
+const cars = generateCars(N);
+// let bestCars=cars[0];
+let bestCar = cars[0];
+if (localStorage.getItem("bestBrain")) {
+    for (let i = 0; i < cars.length; i++) {
+
+        cars[i].brain = JSON.parse(
+            localStorage.getItem("bestBrain"));
+            if(i!=0){
+                NeuralNetwork.mutate(cars[i].brain,0.1)
+            }
+    }
+};
+
+const traffic = [
+    new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(0), -900, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(1), -900, 30, 50, "DUMMY", 2),
+
+    new Car(road.getLaneCenter(1), -1100, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(0), -1300, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(2), -1300, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(1), -1500, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(2), -1700, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(1), -1700, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(0), -1900, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(1), -1900, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(1), -2100, 30, 50, "DUMMY", 2),
+    new Car(road.getLaneCenter(2), -2100, 30, 50, "DUMMY", 2),
 ];
 
 animate();
 
-function animate(time){
-    for(let i=0;i<traffic.length;i++){
-        traffic[i].update(road.borders,[]);
-    }
-    car.update(road.borders,traffic);
+function save() {
+    localStorage.setItem("bestBrain",
+        JSON.stringify(bestCars.brain));
+}
 
-    carCanvas.height=window.innerHeight;
-    networkCanvas.height=window.innerHeight;
+function discard() {
+    localStorage.removeItem("bestBrain");
+}
+
+function generateCars(N) {
+    const cars = [];
+    for (let i = 0; i < N; i++) {
+        cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, "AI"));
+    };
+    return cars;
+}
+
+function animate(time) {
+    for (let i = 0; i < traffic.length; i++) {
+        traffic[i].update(road.borders, []);
+    }
+
+    for (let i = 0; i < cars.length; i++) {
+        cars[i].update(road.borders, traffic);
+    }
+
+    bestCars = cars.find(
+        c => c.y == Math.min(
+            ...cars.map(c => c.y)
+        ));
+
+    carCanvas.height = window.innerHeight;
+    networkCanvas.height = window.innerHeight;
 
     carCtx.save();
-    carCtx.translate(0,-car.y+carCanvas.height*0.7);
+    carCtx.translate(0, -bestCars.y + carCanvas.height * 0.7);
 
     road.draw(carCtx);
-    for(let i=0;i<traffic.length;i++){
-        traffic[i].draw(carCtx,"red");
+    for (let i = 0; i < traffic.length; i++) {
+        traffic[i].draw(carCtx, "red");
     }
-    car.draw(carCtx,"blue");
+    carCtx.globalAlpha = 0.2;
+    for (let i = 0; i < cars.length; i++) {
+        cars[i].draw(carCtx, "blue");
+
+    }
+    carCtx.globalAlpha = 1;
+    bestCars.draw(carCtx, "blue", true);
+
 
     carCtx.restore();
 
-    networkCtx.lineDashOffset=-time/50;
-    Visualizer.drawNetwork(networkCtx,car.brain);
+    networkCtx.lineDashOffset = -time / 50;
+    Visualizer.drawNetwork(networkCtx, bestCars.brain);
     requestAnimationFrame(animate);
 }

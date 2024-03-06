@@ -46,4 +46,14 @@ function getRGBA(value){
     const B=value>0?0:255;
     return "rgba("+R+","+G+","+B+","+alpha+")";
 }
+
+function getRandomColor(){
+     const hue=290+Math.random()*290;
+     return "hsl("+hue+",100%,60%)";
+}
                 
+
+function getRandomLane(){
+    const random= Math.random()*3-1+1;
+    return +(random.toFixed(0))
+}

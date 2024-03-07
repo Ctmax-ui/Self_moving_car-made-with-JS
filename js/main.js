@@ -50,9 +50,20 @@ animate();
 
 
 
+function generateCar() {
+    const newCar = new Car(road.getLaneCenter(getRandomLane()), -200, 30, 50, "DUMMY", 2, getRandomColor());
+    traffic.push(newCar);
+}
 
+// Function to generate cars automatically at regular intervals
+function generateCarsAutomatically(interval) {
+    setInterval(generateCar, interval); // Generate a new car every 'interval' milliseconds
+}
 
+// Example usage: Generate a new car every 2000 milliseconds (2 seconds)
+generateCarsAutomatically(10000);
 
+console.log(generateCars(N));
 
 
 

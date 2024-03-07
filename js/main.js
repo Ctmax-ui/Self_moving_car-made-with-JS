@@ -15,7 +15,7 @@ const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 
 
 const N = 5;  //Ai Cars count.
-const trafficSpawnDistance = 10000;  //how much distance traffic should be.
+const trafficSpawnDistance = 20000;  //how much distance traffic should be.
 const trafficSpawnCount = 70;  // how much traffic should be spawn in trafficSpawnDistance.
 
 
